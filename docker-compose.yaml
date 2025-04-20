@@ -21,6 +21,8 @@ services:
       placement:
         constraints:
           - node.role == manager
+    labels:
+        - "traefik.http.routers.api.rule=Host(`dashboard.local`)"
 
   product-api:
     image: crostonj/techtwist-product:latest

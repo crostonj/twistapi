@@ -11,7 +11,7 @@ services:
       - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
-      - "8080:8080"  # Traefik dashboard (optional)
+      - "8080:8080"  # Traefik dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik.yml:/etc/traefik/traefik.yml"
@@ -19,9 +19,7 @@ services:
       - app-network
 
   product-api:
-    build:
-      context: ./product
-      dockerfile: Dockerfile
+    image: crostonj/techtwist-product:latest
     container_name: product-api
     expose:
       - "8080"
@@ -33,9 +31,7 @@ services:
       - app-network
 
   profile-api:
-    build:
-      context: ./profile
-      dockerfile: Dockerfile
+    image: crostonj/techtwist-profile:latest
     container_name: profile-api
     expose:
       - "8082"

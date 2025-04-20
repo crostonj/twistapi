@@ -19,8 +19,8 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik.yml:/etc/traefik/traefik.yml"
+      - traefik-config:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app-network
     deploy:
@@ -29,7 +29,6 @@ services:
           - node.role == manager
     labels:
       - "traefik.http.routers.api.rule=Host(`dashboard.local`)"
-
 
   profile-api:
     image: crostonj/techtwist-profile:latest
@@ -44,3 +43,6 @@ services:
 networks:
   app-network:
     driver: overlay
+
+volumes:
+  traefik-config:

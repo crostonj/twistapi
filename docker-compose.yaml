@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"  # Traefik dashboard (optional)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml"
+    networks:
+      - app-network
+
+  product-api:
+    build:
+      context: ./product
+      dockerfile: Dockerfile
+    container_name: product-api
+    expose:
+      - "8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
+      - "traefik.http.services.product.loadbalancer.server.port=8080"
+    networks:
+      - app-network
+
+  profile-api:
+    build:
+      context: ./profile
+      dockerfile: Dockerfile
+    container_name: profile-api
+    expose:
+      - "8082"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.profile.rule=PathPrefix(`/profile`)"
+      - "traefik.http.services.profile.loadbalancer.server.port=8082"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

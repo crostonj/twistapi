@@ -30,6 +30,16 @@ services:
     labels:
       - "traefik.http.routers.api.rule=Host(`dashboard.local`)"
 
+  product-api:
+    image: crostonj/techtwist-product:latest
+    networks:
+      - app-network
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.product.rule=PathPrefix(`/product`)"
+        - "traefik.http.services.product.loadbalancer.server.port=8080"
+
   profile-api:
     image: crostonj/techtwist-profile:latest
     networks:

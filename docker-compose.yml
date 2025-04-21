@@ -34,7 +34,7 @@ services:
       - "traefik.http.routers.dashboard.middlewares=strip-dashboard"
       - "traefik.http.middlewares.strip-dashboard.stripPrefix.prefixes=/dashboard"
   product-api:
-    image: crostonj/techtwist-product:latest
+    image: crostonj/techtwist-product:raspberry-pi
     networks:
       - app-network
     deploy:
@@ -44,7 +44,7 @@ services:
         - "traefik.http.services.product.loadbalancer.server.port=8080"
 
   profile-api:
-    image: crostonj/techtwist-profile:latest
+    image: crostonj/techtwist-profile:raspberry-pi
     networks:
       - app-network
     deploy:

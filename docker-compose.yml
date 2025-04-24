@@ -9,6 +9,16 @@ services:
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--tracing.jaeger=true" # Enable Jaeger tracing
+      - "--tracing.jaeger.samplingServerURL=http://jaeger-agent:5778/sampling"
+      - "--tracing.jaeger.localAgentHostPort=jaeger-agent:6831"
+      - "--tracing.jaeger.samplingType=const"
+      - "--tracing.jaeger.samplingParam=1.0"
+      - "--tracing.jaeger.traceContextHeaderName=uber-trace-id"
+      - "--metrics.prometheus=true" # Enable Prometheus metrics
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--metrics.prometheus.entryPoint=web"
     ports:
       - target: 80
         published: 80
@@ -52,6 +62,20 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.profile.rule=PathPrefix(`/profile`)"
         - "traefik.http.services.profile.loadbalancer.server.port=8088"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.41
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    networks:
+      - app-network
 
 networks:
   app-network:
